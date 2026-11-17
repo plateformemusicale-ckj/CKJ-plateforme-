@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CKJ / Plateforme Streaming</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+  body{background:#0d0d0d;display:flex;justify-content:center}
+  .page{width:100%;max-width:480px;background:linear-gradient(180deg,#1a0033,#4b0082,#ff0055);padding-bottom:20px;text-align:center;min-height:100vh}
+  .header{padding:28px 15px;background:linear-gradient(90deg,#FFD700,#FF0055,#8A00FF);border-bottom:4px solid #FFD700}
+  .header h1{font-size:28px;color:white;text-transform:uppercase;line-height:1.2;text-shadow:2px 2px 0 #000}
+  .photo-box{margin:18px 15px;padding:5px;background:linear-gradient(45deg,#FFD700,#FF0055,#00E5FF);border-radius:20px}
+  .photo-box img{width:100%;border-radius:15px;display:block;object-fit:cover}
+  .photo-placeholder{background:#111;color:#FFD700;padding:55px 15px;border-radius:15px;font-weight:bold;font-size:18px}
+  h2{font-size:22px;margin:18px 0;color:#FFD700;text-transform:uppercase;letter-spacing:2px;text-shadow:2px 2px 0 #000}
+  .song{background:#1e0040;border-radius:18px;padding:15px;margin:15px;text-align:left}
+  .song.s1{border:2px solid #FF0055;border-left:8px solid #FF0055}
+  .song.s2{border:2px solid #FFD700;border-left:8px solid #FFD700}
+  .song.s3{border:2px solid #00E5FF;border-left:8px solid #00E5FF}
+  .song.s4{border:2px solid #00FF66;border-left:8px solid #00FF66}
+  .song b{font-size:18px;color:white}
+  .compteur{display:inline-block;background:#FFD700;color:#111;padding:4px 10px;border-radius:20px;font-size:13px;font-weight:bold;margin-left:5px}
+  .btn-spotify{display:inline-block;background:#1DB954;color:white;padding:11px 18px;border-radius:30px;text-decoration:none;font-weight:bold;margin-top:10px;font-size:14px}
+  .btn-tiktok{display:inline-block;background:#000;color:white;padding:13px 20px;border-radius:30px;text-decoration:none;font-weight:bold;margin:10px 5px;font-size:15px;border:2px solid #FFD700}
+  .btn-ia{background:linear-gradient(90deg,#FFD700,#FF0055);color:white;border:none;padding:16px;width:calc(100% - 30px);border-radius:15px;font-size:18px;font-weight:bold;cursor:pointer;margin-top:20px}
+  #ia-box{display:none;background:#111;color:white;border:2px solid #FFD700;border-radius:15px;padding:20px;text-align:left;margin:15px;line-height:1.6;font-size:15px}
+  .box{background:#1e0040;border:2px solid #FFD700;border-radius:18px;padding:18px;margin:15px;text-align:left}
+  .box input,.box textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #444;background:#2a0055;color:white;margin:6px 0;font-size:15px}
+  .box input::placeholder,.box textarea::placeholder{color:#bbb}
+  .btn-send{background:#FFD700;color:#111;border:none;padding:13px;width:100%;border-radius:10px;font-weight:bold;font-size:16px;cursor:pointer}
+  .btn-lire{background:white;color:#111;border:none;padding:13px;width:100%;border-radius:10px;font-weight:bold;font-size:15px;cursor:pointer;margin-top:12px}
+  .btn-insc{background:#00E5FF;color:#111;border:none;padding:13px;width:100%;border-radius:10px;font-weight:bold;font-size:16px;cursor:pointer;margin-top:8px}
+  .one-msg{background:#2a0055;border-radius:10px;padding:10px;margin:8px 0;border-left:4px solid #FF0055;color:white}
+  .one-msg b{color:#FFD700}
+  footer{margin-top:25px;font-size:13px;color:white;padding:15px}
+  footer b{color:#FFD700}
+  .user-bar{background:#FFD700;color:#111;padding:10px;border-radius:10px;font-weight:bold;margin-bottom:10px;text-align:center}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header"><h1>CKJ / Plateforme Streaming</h1></div>
+  <div class="photo-box">
+    <img src="photo-ckj.jpg" alt="CKJ" onerror="this.style.display='none';document.getElementById('no-photo').style.display='block'">
+    <div id="no-photo" class="photo-placeholder" style="display:none">📸 PHOTO DE CKJ ICI</div>
+  </div>
+  <a class="btn-tiktok" href="https://www.tiktok.com/@jvn_10r2k08" target="_blank">🎵 TikTok CKJ - @jvn_10r2k08</a>
+  <h2>👤 Inscription Fan</h2>
+  <div class="box">
+    <div id="user-info"></div>
+    <div id="insc-form">
+      <input id="pseudo" type="text" placeholder="Ton pseudo... Ex: Fan CKJ">
+      <input id="mdp" type="password" placeholder="Choisis un mot de passe...">
+      <button class="btn-insc" onclick="inscrire()">S'inscrire / Se connecter ✅</button>
+      <p style="color:#ccc;font-size:12px;text-align:center;margin-top:8px">Une seule fois. Après ton pseudo reste pour tes messages.</p>
+    </div>
+    <button class="btn-lire" onclick="deconnecter()" id="btn-deco" style="display:none">Se déconnecter</button>
+  </div>
+  <h2>Historique Musicale</h2>
+  <div class="song s1">
+    <b>Song 1 - Folasse</b> <span class="compteur">👁️ <span id="c1">0</span> clics</span>
+    <iframe style="border-radius:12px;margin-top:10px" src="https://open.spotify.com/embed/track/5uGwWGYlrHURCQenzDPZxG?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    <br><a class="btn-spotify" href="https://open.spotify.com/track/5uGwWGYlrHURCQenzDPZxG" target="_blank" onclick="compter('c1')">▶ Écouter sur Spotify</a>
+  </div>
+  <div class="song s2">
+    <b>Song 2 - Minimum 100K</b> <span class="compteur">👁️ <span id="c2">0</span> clics</span>
+    <iframe style="border-radius:12px;margin-top:10px" src="https://open.spotify.com/embed/track/7LgBKxhRbda78vck3lg4nW?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    <br><a class="btn-spotify" href="https://open.spotify.com/track/7LgBKxhRbda78vck3lg4nW" target="_blank" onclick="compter('c2')">▶ Écouter sur Spotify</a>
+  </div>
+  <div class="song s3">
+    <b>Song 3 - Marrasse</b> <span class="compteur">👁️ <span id="c3">0</span> clics</span>
+    <iframe style="border-radius:12px;margin-top:10px" src="https://open.spotify.com/embed/track/58ItV0Sl8NyeGyRGpHk8TI?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    <br><a class="btn-spotify" href="https://open.spotify.com/track/58ItV0Sl8NyeGyRGpHk8TI" target="_blank" onclick="compter('c3')">▶ Écouter sur Spotify</a>
+  </div>
+  <div class="song s4">
+    <b>Song 4 - Succès</b> <span class="compteur">👁️ <span id="c4">0</span> clics</span>
+    <iframe style="border-radius:12px;margin-top:10px" src="https://open.spotify.com/embed/track/39dalzRaTsqJBCLqzoFy0u?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    <br><a class="btn-spotify" href="https://open.spotify.com/track/39dalzRaTsqJBCLqzoFy0u" target="_blank" onclick="compter('c4')">▶ Écouter sur Spotify</a>
+  </div>
+  <button class="btn-ia" onclick="showIA()">En savoir plus sur CKJ ?<br>Clique ici ✓</button>
+  <div id="ia-box">
+    <b>🤖 IA CKJ :</b><br><br>
+    Cissé Karamoko Junior, alias <b>CKJ</b>, est un artiste ivoirien.<br><br>
+    Il est connu pour <b>"Folasse"</b>, <b>"Minimum 100K"</b>, <b>"Marrasse"</b> et <b>"Succès"</b>.<br><br>
+    <i>[Bio officielle à compléter]</i>
+  </div>
+  <h2>💬 Messages pour CKJ</h2>
+  <div class="box">
+    <input id="nom" type="text" placeholder="Ton nom...">
+    <textarea id="message" rows="3" placeholder="Ton message pour CKJ..."></textarea>
+    <button class="btn-send" onclick="envoyerMsg()">Envoyer mon message 💛</button>
+    <button class="btn-lire" onclick="toggleMsgs()">📖 Lire les messages laissés à l'artiste</button>
+    <div id="liste-msg" style="display:none;margin-top:15px"></div>
+  </div>
+  <footer><b>CKJ Plateforme Streaming</b><br>Créé par <b>FSP - Flan Prince</b></footer>
+</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, onValue, runTransaction, push, set, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyCHXhEHpra0zFJl3dqHih0_BQVZTOCILPI",
+  authDomain: "ckj-plateforme.firebaseapp.com",
+  databaseURL: "https://ckj-plateforme-default-rtdb.firebaseio.com",
+  projectId: "ckj-plateforme",
+  storageBucket: "ckj-plateforme.firebasestorage.app",
+  messagingSenderId: "635659464722",
+  appId: "1:635659464722:web:db19f30f1aa07546e4a8cb"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+['c1','c2','c3','c4'].forEach(id=>{
+  onValue(ref(db, "clics/"+id), (snap)=>{
+    document.getElementById(id).innerText = snap.val() || 0;
+  });
+});
+window.compter = function(id){
+  runTransaction(ref(db, "clics/"+id), (cur)=>(cur||0)+1);
+}
+window.showIA = function(){
+  var box=document.getElementById('ia-box');
+  box.style.display=box.style.display==='block'?'none':'block';
+  if(box.style.display==='block'){box.scrollIntoView({behavior:'smooth'});}
+}
+function majUser(){
+  const pseudo = localStorage.getItem('ckj_pseudo');
+  if(pseudo){
+    document.getElementById('user-info').innerHTML = '<div class="user-bar">👋 Connecté : '+pseudo+'</div>';
+    document.getElementById('insc-form').style.display='none';
+    document.getElementById('btn-deco').style.display='block';
+    document.getElementById('nom').value = pseudo;
+  } else {
+    document.getElementById('user-info').innerHTML = '';
+    document.getElementById('insc-form').style.display='block';
+    document.getElementById('btn-deco').style.display='none';
+  }
+}
+majUser();
+window.inscrire = async function(){
+  const pseudo = document.getElementById('pseudo').value.trim();
+  const mdp = document.getElementById('mdp').value.trim();
+  if(!pseudo || !mdp){ alert('Mets ton pseudo et un mot de passe Boss !'); return; }
+  const key = pseudo.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
+  const snap = await get(ref(db, "users/"+key));
+  if(snap.exists()){
+    if(snap.val().mdp !== mdp){ alert('Ce pseudo existe déjà, mets un autre pseudo ou le bon mot de passe.'); return; }
+    alert('Bon retour '+pseudo+' ! Tu es reconnecté.');
+  } else {
+    await set(ref(db, "users/"+key), {pseudo:pseudo, mdp:mdp, date:new Date().toLocaleString("fr-FR")});
+    alert('Bienvenue '+pseudo+' ! Tu es inscrit ✅');
+  }
+  localStorage.setItem('ckj_pseudo', pseudo);
+  majUser();
+}
+window.deconnecter = function(){
+  localStorage.removeItem('ckj_pseudo');
+  document.getElementById('nom').value='';
+  majUser();
+}
+onValue(ref(db, "messages/ckj"), (snap)=>{
+  let html='';
+  const data = snap.val();
+  if(data){
+    Object.values(data).reverse().forEach(m=>{
+      html+='<div class="one-msg"><b>'+m.nom+'</b><br>'+m.msg+'</div>';
+    });
+  }
+  document.getElementById('liste-msg').innerHTML = html || '<p style="color:#ccc;font-size:13px">Aucun message pour le moment. Sois le premier !</p>';
+});
+window.toggleMsgs = function(){
+  var box=document.getElementById('liste-msg');
+  box.style.display = (box.style.display==='none' || box.style.display==='') ? 'block' : 'none';
+}
+window.envoyerMsg = function(){
+  let nom=document.getElementById('nom').value.trim();
+  let msg=document.getElementById('message').value.trim();
+  if(!nom||!msg){alert('Mets ton nom et ton message Boss !');return;}
+  const newRef = push(ref(db, "messages/ckj"));
+  set(newRef, {nom:nom, msg:msg});
+  document.getElementById('message').value='';
+  document.getElementById('liste-msg').style.display='block';
+  alert('Merci ! Ton message est publié ❤️');
+}
+</script>
+</body>
+</html>
